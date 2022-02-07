@@ -14,7 +14,7 @@ using System.Text;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web.Services;
-
+using System.Diagnostics;
 
 namespace _204411R_PracAssignment
 {
@@ -31,77 +31,66 @@ namespace _204411R_PracAssignment
 
         protected void btn_login_Click(object sender, EventArgs e)
         {
-            string pwd = HttpUtility.HtmlEncode(tb_password.Text.Trim());
-            string email = HttpUtility.HtmlEncode(tb_email.Text.Trim());
-
-            SHA512Managed hashing = new SHA512Managed();
-            string dbHash = getDBHash(email);
-            string dbSalt = getDBSalt(email);
-
-            try
+            if (ValidateCaptcha())
             {
-                if (dbSalt != null && dbSalt.Length > 0 && dbHash != null && dbHash.Length > 0)
+                string pwd = HttpUtility.HtmlEncode(tb_password.Text.Trim());
+                string email = HttpUtility.HtmlEncode(tb_email.Text.Trim());
+
+                SHA512Managed hashing = new SHA512Managed();
+                string dbHash = getDBHash(email);
+                string dbSalt = getDBSalt(email);
+                Debug.WriteLine("test1");
+
+                try
                 {
-                    string pwdWithSalt = pwd + dbSalt;
-                    byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwdWithSalt));
-                    string userHash = Convert.ToBase64String(hashWithSalt);
-                    if (userHash.Equals(dbHash))
+                    if (dbSalt != null && dbSalt.Length > 0 && dbHash != null && dbHash.Length > 0)
                     {
-                        Response.Redirect("Success.aspx", false);
+                        Debug.WriteLine("test2");
+                        string pwdWithSalt = pwd + dbSalt;
+                        byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwdWithSalt));
+                        string userHash = Convert.ToBase64String(hashWithSalt);
+
+                        Debug.WriteLine(userHash);
+
+                        if (userHash.Equals(dbHash))
+                        {
+                            Debug.WriteLine("test3");
+                            Session["LoggedIn"] = tb_email.Text.Trim();
+
+                            // create a new GUID and save to session
+                            string guid = Guid.NewGuid().ToString();
+                            Session["AuthToken"] = guid;
+
+                            // now create a new cookie with this guid value
+                            Response.Cookies.Add(new HttpCookie("AuthToken", guid));
+
+                            Response.Redirect("Index.aspx", false);
+                        }
+
+                        else
+                        {
+                            Debug.WriteLine("test4");
+                            lbl_msg.Text = "Email or password is not valid. Please try again.";
+                            //Response.Redirect("Login.aspx");
+                            return;
+                        }
                     }
-
-
                     else
                     {
                         lbl_msg.Text = "Email or password is not valid. Please try again.";
-                        Response.Redirect("Login.aspx");
                     }
                 }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.ToString());
+                }
+                finally { }
             }
-            catch (Exception ex)
+            else
             {
-                throw new Exception(ex.ToString());
+                lbl_msg.Text = "Captcha Error";
             }
-            finally { }
-            
-
-            if (ValidateCaptcha())
-            {
-                SqlConnection connection = new SqlConnection(MYDBConnectionString);
-                string sql = "SELECT * FROM Account WHERE Email=@Email";
-                SqlCommand command = new SqlCommand(sql, connection);
-                connection.Open();
-                command.Parameters.AddWithValue("@Email", email);
-                SqlDataReader reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-
-                }
-
-                // Check for username and password
-                if (tb_email.Text.Trim().Equals("u") && tb_password.Text.Trim().Equals("p"))
-                {
-                    Session["LoggedIn"] = tb_email.Text.Trim();
-
-                    // create a new GUID and save to session
-                    string guid = Guid.NewGuid().ToString();
-                    Session["AuthToken"] = guid;
-
-                    // now create a new cookie with this guid value
-                    Response.Cookies.Add(new HttpCookie("AuthToken", guid));
-
-                    Response.Redirect("Index.aspx", false);
-                }
-                else
-                {
-                    lbl_msg.Text = "Wrong email or password";
-                }
-            }
-
-
         }
-
 
         private bool checkInput()
         {

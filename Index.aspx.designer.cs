@@ -33,6 +33,42 @@ namespace _204411R_PracAssignment
         protected global::System.Web.UI.WebControls.Label lbl_msg;
 
         /// <summary>
+        /// lbl_firstName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lbl_firstName;
+
+        /// <summary>
+        /// lbl_lastName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lbl_lastName;
+
+        /// <summary>
+        /// lbl_creditCard control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lbl_creditCard;
+
+        /// <summary>
+        /// lbl_email control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lbl_email;
+
+        /// <summary>
         /// btn_logout control.
         /// </summary>
         /// <remarks>

@@ -91,21 +91,6 @@
             }
         }
 
-        <%--function validateCardExpiry() {
-            var cardExpiry = document.getElementById('<%=tb_cardExpiry.ClientID%>').value;
-
-            if (cardExpiry.length <= 0) {
-                document.getElementById("lbl_cardExpiry").innerHTML = "Please enter a valid expiry date";
-                document.getElementById("lbl_cardExpiry").style.color = "Red";
-                return ("too_short");
-            }
-
-            else {
-                document.getElementById("lbl_cardExpiry").innerHTML = "Excellent";
-                document.getElementById("lbl_cardExpiry").style.color = "Green";
-            }
-        }--%>
-
         function validateCVV() {
             var cvv = document.getElementById('<%=tb_CVV.ClientID%>').value;
 
@@ -200,21 +185,6 @@
             document.getElementById("lbl_pwChecker").innerHTML = "Password: Strong";
             document.getElementById("lbl_pwChecker").style.color = "Blue";
         }
-
-        <%--function validateDOB() {
-            var dob = document.getElementById('<%=tb_dob.ClientID%>').value;
-
-            if (dob.length <= 0) {
-                document.getElementById("lbl_dob").innerHTML = "Please enter a valid date";
-                document.getElementById("lbl_dob").style.color = "Red";
-                return ("too_short");
-            }
-
-            else {
-                document.getElementById("lbl_dob").innerHTML = "Excellent";
-                document.getElementById("lbl_dob").style.color = "Green";
-            }
-        }--%>
         
     </script>
 
@@ -256,7 +226,7 @@
                     <div class="row m-2">
                         <div>
                             Credit Card Expiry
-                            <asp:TextBox ID="tb_cardExpiry" runat="server" Width="209px" type="month" onkeyup="javascript:validateCardExpiry()"></asp:TextBox>
+                            <asp:TextBox ID="tb_cardExpiry" runat="server" Width="209px" type="month"></asp:TextBox>
                             <asp:Label ID="lbl_cardExpiry" runat="server" Text=""></asp:Label>
                         </div>
                         <div>
@@ -283,19 +253,12 @@
                             <asp:Label ID="lbl_pwChecker" runat="server" Text=""></asp:Label>
                         </div>  
                     </div>  
-
-                    <%--<div class="row m-2">  
-                        <div>
-                            Confirm Password
-                            <asp:TextBox ID="tb_password2" runat="server" TextMode="Password"></asp:TextBox>  
-                        </div>   
-                    </div> --%> 
               
                     <%--Date of Birth--%>
                     <div class="row m-2">  
                         <div>
                             Date of Birth
-                            <asp:TextBox ID="tb_dob" runat="server" type="date" onkeyup="javascript:validateDOB()"></asp:TextBox> 
+                            <asp:TextBox ID="tb_dob" runat="server" type="date"></asp:TextBox> 
                             <asp:Label ID="lbl_dob" runat="server" Text=""></asp:Label>
                         </div> 
                     </div>  
@@ -305,8 +268,6 @@
                         <div>
                             Photo
                             <asp:FileUpload ID="photoUpload" runat="server" Width="250px"/>
-                            <%--<asp:Label ID="lbl_photo" runat="server" Text=""></asp:Label>--%>                 
-                            <asp:Button ID="btn_photo" runat="server" Text="Upload Photo" OnClick="btn_photo_Click"/>   
                         </div>  
                     </div>
                  

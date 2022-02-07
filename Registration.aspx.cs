@@ -26,6 +26,7 @@ namespace _204411R_PracAssignment
         static string salt;
         byte[] Key;
         byte[] IV;
+        byte[] image2;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -56,7 +57,7 @@ namespace _204411R_PracAssignment
                     break;
 
                 case 5:
-                    status = "Excellent";
+                    status = "";
                     break;
 
                 default:
@@ -96,7 +97,8 @@ namespace _204411R_PracAssignment
             Key = cipher.Key;
             IV = cipher.IV;
 
-            
+            int imgFile = photoUpload.PostedFile.ContentLength;
+            image2 = new byte[imgFile];
 
 
             // validate input
@@ -113,11 +115,6 @@ namespace _204411R_PracAssignment
                 lbl_firstName.ForeColor = Color.Red;
 
             }
-            //else
-            //{
-            //    lbl_firstName.Text = "Great";
-            //    lbl_firstName.ForeColor = Color.Green;
-            //}
 
             // check last name
             else if (tb_lastName.Text == "")
@@ -132,11 +129,6 @@ namespace _204411R_PracAssignment
                 lbl_lastName.ForeColor = Color.Red;
 
             }
-            //else
-            //{
-            //    lbl_lastName.Text = "Great";
-            //    lbl_lastName.ForeColor = Color.Green;
-            //}
 
             // check card number
             else if (tb_cardNumber.Text == "")
@@ -154,11 +146,6 @@ namespace _204411R_PracAssignment
                 lbl_cardNumber.Text = "Please enter a valid credit card number";
                 lbl_cardNumber.ForeColor = Color.Red;
             }
-            //else
-            //{
-            //    lbl_cardNumber.Text = "Great";
-            //    lbl_cardNumber.ForeColor = Color.Green;
-            //}
 
             // check card expiry date
             else if (tb_cardExpiry.Text == "")
@@ -166,11 +153,6 @@ namespace _204411R_PracAssignment
                 lbl_cardExpiry.Text = "Please select card expiry date";
                 lbl_cardExpiry.ForeColor = Color.Red;
             }
-            //else
-            //{
-            //    lbl_cardExpiry.Text = "Great";
-            //    lbl_cardExpiry.ForeColor = Color.Green;
-            //}
 
             // check CVV
             else if (tb_CVV.Text == "")
@@ -189,11 +171,6 @@ namespace _204411R_PracAssignment
                 lbl_CVV.Text = "Please enter a valid (3-digit) CVV number";
                 lbl_CVV.ForeColor = Color.Red;
             }
-            //else
-            //{
-            //    lbl_CVV.Text = "Great";
-            //    lbl_CVV.ForeColor = Color.Green;
-            //}
 
             // check email address
             else if (tb_email.Text == "")
@@ -201,16 +178,6 @@ namespace _204411R_PracAssignment
                 lbl_email.Text = "Please enter an email address";
                 lbl_email.ForeColor = Color.Red;
             }
-            //else if (Regex.IsMatch(tb_email.Text, "@"))
-            //{
-            //    lbl_email.Text = "Great";
-            //    lbl_email.ForeColor = Color.Green;
-            //}
-            //else
-            //{
-            //    lbl_email.Text = "Please enter a valid email address";
-            //    lbl_email.ForeColor = Color.Red;
-            //}
 
             // check date of birth
             else if (tb_dob.Text == "")
@@ -218,17 +185,14 @@ namespace _204411R_PracAssignment
                 lbl_dob.Text = "Please select date of birth";
                 lbl_dob.ForeColor = Color.Red;
             }
-            //else
-            //{
-            //    lbl_dob.Text = "Great";
-            //    lbl_dob.ForeColor = Color.Green;
-            //}
+
             else
             {
+                Debug.WriteLine("creating account now...");
                 createAccount();
             }
 
-            Response.Redirect("Login.aspx", false);
+            //Response.Redirect("Login.aspx", false);
 
         }
 
@@ -277,38 +241,61 @@ namespace _204411R_PracAssignment
 
         protected void createAccount()
         {
-            var checkEmail = "";
-            var result = "0";
+            SqlConnection connection = new SqlConnection(MYDBConnectionString);
+            string sql = "SELECT Email FROM Account WHERE Email=@Email";
+            SqlCommand command = new SqlCommand(sql, connection);
+
+            bool checkEmail = false;
+            var email = HttpUtility.HtmlEncode(tb_email.Text.Trim());
             try
             {
-                SqlConnection connection = new SqlConnection(MYDBConnectionString);
-                string sql = "SELECT Email FROM Account WHERE Email=@Email";
-                SqlCommand command = new SqlCommand(sql, connection);
+                Debug.WriteLine("opning db to check email..");
+                command.Parameters.AddWithValue("@Email", email);
                 connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-                
-
-                while (reader.Read())
+                using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    checkEmail = reader.GetValue(0).ToString();
-                    if (checkEmail == HttpUtility.HtmlEncode(tb_email.Text.Trim()))
+
+                    while (reader.Read())
                     {
-                        result = "1";
+                        if (reader["Email"] != null)
+                        {
+                            Debug.WriteLine("email is not null");
+                            if (reader["Email"] != DBNull.Value)
+                            {
+                                Debug.WriteLine("email is not DBnull. checkemail is true");
+                                checkEmail = true;
+                            }
+                            else
+                            {
+                                Debug.WriteLine("email is false");
+                                checkEmail = false;
+                            }
+                        }
+                        else
+                        {
+                            Debug.WriteLine("email is false 2");
+                            checkEmail = false;
+                        }
                     }
+
                 }
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.ToString());
             }
+            finally { connection.Close(); }
 
-            if (result == "0")
+            if (checkEmail == false)
             {
+                Debug.WriteLine("if checkEmail is false, so creating account");
                 try
                 {
                     using (SqlConnection con = new SqlConnection(MYDBConnectionString))
                     {
-                        using (SqlCommand cmd = new SqlCommand("INSERT INTO Account VALUES (@FirstName, @LastName, @CreditCardNumber, @CreditCardExpiry, @CVV, @Email, @PasswordHash, @PasswordSalt, @DateOfBirth, @EmailVerified, @IV, @Key)"))
+                       
+
+                        using (SqlCommand cmd = new SqlCommand("INSERT INTO Account VALUES (@FirstName, @LastName, @CreditCardNumber, @CreditCardExpiry, @CVV, @Email, @PasswordHash, @PasswordSalt, @DateOfBirth, @Image, @IV, @Key)"))
                         {
                             using (SqlDataAdapter sda = new SqlDataAdapter())
                             {
@@ -322,7 +309,7 @@ namespace _204411R_PracAssignment
                                 cmd.Parameters.AddWithValue("@PasswordHash", finalHash);
                                 cmd.Parameters.AddWithValue("@PasswordSalt", salt);
                                 cmd.Parameters.AddWithValue("@DateOfBirth", HttpUtility.HtmlEncode(tb_dob.Text.Trim()));
-                                cmd.Parameters.AddWithValue("@EmailVerified", DBNull.Value);
+                                cmd.Parameters.AddWithValue("@Image", image2);
 
                                 cmd.Parameters.AddWithValue("@IV", Convert.ToBase64String(IV));
                                 cmd.Parameters.AddWithValue("@Key", Convert.ToBase64String(Key));
@@ -339,10 +326,11 @@ namespace _204411R_PracAssignment
                 {
                     throw new Exception(ex.ToString());
                 }
-                
+                Response.Redirect("Login.aspx");
             }
             else
             {
+                Debug.WriteLine("Email exists!");
                 lbl_email.Text = "An account with this email address already exists!";
                 lbl_email.ForeColor = Color.Red;
             }
@@ -389,6 +377,7 @@ namespace _204411R_PracAssignment
             return score;
         }
 
+        // Encrypt data
         protected byte[] encryptData(string data)
         {
             byte[] cipherText = null;
@@ -407,12 +396,6 @@ namespace _204411R_PracAssignment
             }
             finally { }
             return cipherText;
-        }
-
-
-        protected void btn_photo_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

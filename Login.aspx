@@ -83,7 +83,7 @@
                 <br />
                 <br />
                 <div>
-                    <asp:Label ID="lbl_msg" runat="server" EnableViewState="False">Error message here (lblMessage)</asp:Label>
+                    <asp:Label ID="lbl_msg" runat="server" Text=""></asp:Label>
                 </div>
             </form>
         </div>
