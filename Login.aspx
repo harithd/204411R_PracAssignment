@@ -8,7 +8,7 @@
 
     <link href="Content/bootstrap.min.css" rel="stylesheet" />
 
-    <script src="https://www.google.com/recaptcha/api.js?render=6LcIr08eAAAAAPIntOGK_J-RAj5N68vKzDKaKwmL"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=SECRETKEY"></script>
     <script type="text/javascript" >
 
         function validatePassword() {
@@ -91,7 +91,7 @@
 
     <script>
         grecaptcha.ready(function () {
-            grecaptcha.execute('6LcIr08eAAAAAPIntOGK_J-RAj5N68vKzDKaKwmL', { action: 'Login' }).then(function (token) {
+            grecaptcha.execute('SECRETKEY', { action: 'Login' }).then(function (token) {
                 document.getElementById("g-recaptcha-response").value = token;
             });
         });
