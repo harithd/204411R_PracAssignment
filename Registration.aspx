@@ -8,7 +8,7 @@
     
     <link href="Content/bootstrap.min.css" rel="stylesheet" />
 
-    <script src="https://www.google.com/recaptcha/api.js?render=6LcIr08eAAAAAPIntOGK_J-RAj5N68vKzDKaKwmL"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=SECRETKEY"></script>
     <script type="text/javascript">
         function validateFirstName() {
             var firstName = document.getElementById('<%=tb_firstName.ClientID%>').value;
@@ -291,7 +291,7 @@
      
     <script>
         grecaptcha.ready(function () {
-            grecaptcha.execute('6LcIr08eAAAAAPIntOGK_J-RAj5N68vKzDKaKwmL', { action: 'Registration' }).then(function (token) {
+            grecaptcha.execute('SECRETKEY', { action: 'Registration' }).then(function (token) {
                 document.getElementById("g-recaptcha-response").value = token;
             });
         });
