@@ -209,7 +209,7 @@ namespace _204411R_PracAssignment
             string captchaResponse = Request.Form["g-recaptcha-response"];
 
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create
-                ("https://www.google.com/recaptcha/api/siteverify?secret=6LcIr08eAAAAAHEIXpvo5kerfqx29Un4NcOO07di &response=" + captchaResponse);
+                ("https://www.google.com/recaptcha/api/siteverify?secret=SECRETKEY &response=" + captchaResponse);
 
             try
             {
